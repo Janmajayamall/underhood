@@ -1,6 +1,8 @@
 package underhood
 
 import (
+	"fmt"
+
 	"github.com/henrycg/simplepir/matrix"
 	"github.com/henrycg/simplepir/pir"
 	"github.com/henrycg/simplepir/rand"
@@ -9,6 +11,19 @@ import (
 type ServerResponseWithHintAnswer[T matrix.Elem] struct {
 	pirAnswer *pir.Answer[T]
 	hintAns   HintAnswer
+}
+
+func (res *ServerResponseWithHintAnswer[T]) printSize() {
+	pir_answer_bytes := (len(res.pirAnswer.Answer.Data()) * int(T(0).Bitlen())) / 8
+
+	hint_bytes := int(0)
+	for i := 0; i < len(res.hintAns.HintCts); i++ {
+		for j := 0; j < len(res.hintAns.HintCts[i]); j++ {
+			hint_bytes += len(res.hintAns.HintCts[i][j])
+		}
+	}
+
+	fmt.Printf("(Server response) PIR ans size=%d bytes; Hint ans size=%d bytes; Total size=%d bytes\n", pir_answer_bytes, hint_bytes, pir_answer_bytes+hint_bytes)
 }
 
 type Server[T matrix.Elem] struct {

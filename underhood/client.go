@@ -1,6 +1,8 @@
 package underhood
 
 import (
+	"fmt"
+
 	"github.com/henrycg/simplepir/matrix"
 	"github.com/henrycg/simplepir/pir"
 	"github.com/henrycg/simplepir/rand"
@@ -16,6 +18,17 @@ type HintQuery = []CipherBlob
 type QueryWithEncSecrets[T matrix.Elem] struct {
 	pirQuery       *pir.Query[T]
 	encOuterSecret HintQuery
+}
+
+func (qu *QueryWithEncSecrets[T]) printSize() {
+	qu_bytes := (len(qu.pirQuery.Query.Data()) * int(T(0).Bitlen())) / 8
+
+	hint_bytes := int(0)
+	for i := 0; i < len(qu.encOuterSecret); i++ {
+		hint_bytes += len(qu.encOuterSecret[i])
+	}
+
+	fmt.Printf("(Client query) PIR query size=%d bytes; Outer Enc size=%d bytes; Total size=%d bytes\n", qu_bytes, hint_bytes, qu_bytes+hint_bytes)
 }
 
 type HintAnswer struct {
